@@ -17,14 +17,14 @@ class Agenda:
       return True
     
     if (copia1.ultimoID > copia2.ultimoID):
-      copia2.contatos = copia1.contatos
+      copia2._contatos = copia1._contatos
       copia2.ultimoID = copia1.ultimoID
-      self._contatos = copia1.contatos
+      self._contatos = copia1._contatos
       self.ultimoID = copia1.ultimoID
     else:
-      copia1.contatos = copia2.contatos
+      copia1._contatos = copia2._contatos
       copia1.ultimoID = copia2.ultimoID
-      self._contatos = copia2.contatos
+      self._contatos = copia2._contatos
       self.ultimoID = copia2.ultimoID
 
   def redefineUltimoID(self, id: int):
@@ -57,8 +57,9 @@ class Agenda:
     novaLista.append(novoContato)
 
     self.contatos = novaLista
-    self._copia1.contatos = novaLista
-    self._copia2.contatos = novaLista
+    self._copia1._contatos = novaLista
+    self._copia2._contatos = novaLista
+    self.redefineUltimoID(self.ultimoID+1)
 
     return True
 
@@ -68,10 +69,10 @@ class Agenda:
     novaLista = list(filter(lambda ctt: ctt['id'] != id, self._contatos))
     if len(novaLista) == len(self._contatos):
       return False
-    
+
     self.contatos = novaLista
-    self._copia1 = novaLista
-    self._copia2 = novaLista
+    self._copia1._contatos = novaLista
+    self._copia2._contatos = novaLista
 
     return True
 
@@ -79,21 +80,18 @@ class Agenda:
   def atualizarContato(self, id: str, nome: str = None, telefone: str = None):
     if not self.online: raise Exception("Servidor Offline")
     indexContato = -1
+    jaExiste = False
     novaLista = self._contatos
 
     for i in range(len(novaLista)):
       if novaLista[i]["id"] == id:
         indexContato = i
-        break
+      elif novaLista[i]["nome"] == nome:
+        jaExiste = True
     if indexContato == -1:
-      return False, "Não encontrado"
-    
-    jaExiste = list(filter(
-      lambda ctt: ctt['nome'] == nome or ctt['telefone'] == telefone,
-      self._contatos
-      ))
-    if len(jaExiste) > 0:
-      return False, len(jaExiste)
+      return False
+    if (jaExiste):
+      return False
     
     novaLista[indexContato] = {
       "id": novaLista[indexContato]["id"],
@@ -102,7 +100,7 @@ class Agenda:
     }
 
     self.contatos = novaLista
-    self._copia1.contatos = novaLista
-    self._copia2.contatos = novaLista
+    self._copia1._contatos = novaLista
+    self._copia2._contatos = novaLista
 
     return True
