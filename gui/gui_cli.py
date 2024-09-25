@@ -7,20 +7,20 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from tkinter import Tk, StringVar, Listbox, Scrollbar, Entry, SE
 from tkinter.font import Font
 from tkinter.ttk import Style, Label, Button
-
 from random import randint
 
-from cli.cli import agendasCli
+from models.i_agenda import IAgenda
 
 TELA_NORMAL = "400x305"
 
 class GuiCliente:
-  def __init__(self):
+  def __init__(self, agendasCli: dict[str, IAgenda]):
     self.agendas = [ag for ag in agendasCli]
     self.agendaConectada = randint(0, 2)
     self.cliAgenda = agendasCli[self.agendas[self.agendaConectada]]
     self.contatoAtual = -1
     self.contatos = []
+    self.agendasCli = agendasCli
   
   def criaComponenteJanela(self):
     self.janela = Tk()
@@ -135,11 +135,11 @@ class GuiCliente:
       novaConexao = randint(0, 2)
 
     try:
-      agendasCli[self.agendas[novaConexao]].contatos
+      self.agendasCli[self.agendas[novaConexao]].contatos
     except:
       novaConexao = 3 - (novaConexao + self.agendaConectada)
     
-    self.cliAgenda = agendasCli[self.agendas[novaConexao]]
+    self.cliAgenda = self.agendasCli[self.agendas[novaConexao]]
     self.agendaConectada = 0 + novaConexao # evitando erros de ponteiro
 
     self.lblInfoAgenda.configure(text=f"Conectado: Agenda {self.agendaConectada + 1}")
@@ -232,5 +232,3 @@ class GuiCliente:
     self.atualizarContatos()
 
     self.janela.mainloop()
-
-GuiCliente().iniciaAplicacao()
