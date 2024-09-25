@@ -1,4 +1,3 @@
-import Pyro4
 from abc import ABC, abstractmethod
 
 class IAgenda(ABC):
